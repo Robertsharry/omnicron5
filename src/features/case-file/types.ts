@@ -2,11 +2,13 @@ export type GameStatus = "idle" | "active" | "complete";
 
 export interface Incident {
   title: string;
+  subject: string;
   dispatch: string;
   location: string;
   threat: string;
   witnesses: string;
   sigil: string;
+  openingChoices: readonly Choice[];
 }
 
 export interface Metrics {
@@ -21,6 +23,11 @@ export interface Choice {
   text: string;
   delta: MetricDelta;
   log: string;
+}
+
+export interface StoryBeat {
+  dispatch: string;
+  choices: readonly Choice[];
 }
 
 export interface CaseFile {
@@ -44,5 +51,6 @@ export interface GameState {
   logs: string[];
   choices: string[];
   dispatch: string;
+  currentChoices: readonly Choice[];
   locked: boolean;
 }

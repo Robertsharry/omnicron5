@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { PHASES } from "./data";
-import { createCase, randomComplication } from "./engine";
+import { createBeat, createCase } from "./engine";
 import { gameReducer, initialGameState } from "./gameReducer";
 import type { Choice } from "./types";
 
@@ -29,10 +29,10 @@ export function useCaseGame() {
     dispatch({ type: "CHOOSE", choice });
     timer.current = window.setTimeout(() => {
       if (state.phaseIndex >= PHASES.length - 1) dispatch({ type: "COMPLETE" });
-      else dispatch({ type: "ADVANCE", dispatch: randomComplication() });
+      else if (state.caseFile) dispatch({ type: "ADVANCE", beat: createBeat(state.caseFile.incident, state.phaseIndex + 1) });
     }, TRANSITION_MS);
     return true;
-  }, [state.locked, state.phaseIndex, state.status]);
+  }, [state.caseFile, state.locked, state.phaseIndex, state.status]);
 
   return { state, start, abandon, choose };
 }

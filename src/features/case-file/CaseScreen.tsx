@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { CHOICES } from "./data";
 import { DecisionPanel } from "./DecisionPanel";
 import { Dossier } from "./Dossier";
 import { MetricsPanel } from "./MetricsPanel";
@@ -16,12 +15,12 @@ export function CaseScreen({ state, onAbandon, onChoose }: CaseScreenProps) {
     const handleKey = (event: KeyboardEvent) => {
       if (!["1", "2", "3"].includes(event.key) || state.locked) return;
       const index = Number(event.key) - 1;
-      const choice = CHOICES[state.phaseIndex]?.[index];
+      const choice = state.currentChoices[index];
       if (choice) onChoose(choice, index);
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [onChoose, state.locked, state.phaseIndex]);
+  }, [onChoose, state.currentChoices, state.locked]);
 
   if (!state.caseFile) return null;
   return (
@@ -35,7 +34,7 @@ export function CaseScreen({ state, onAbandon, onChoose }: CaseScreenProps) {
       </div>
       <div className="case-grid">
         <Dossier caseFile={state.caseFile} />
-        <DecisionPanel phaseIndex={state.phaseIndex} dispatch={state.dispatch} locked={state.locked} onChoose={onChoose} />
+        <DecisionPanel phaseIndex={state.phaseIndex} dispatch={state.dispatch} locked={state.locked} choices={state.currentChoices} onChoose={onChoose} />
         <MetricsPanel metrics={state.metrics} logs={state.logs} />
       </div>
     </section>

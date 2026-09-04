@@ -8,7 +8,7 @@ import { useCaseGame } from "../features/case-file/useCaseGame";
 import { Hero } from "../features/landing/Hero";
 import { useSound } from "../hooks/useSound";
 import { BackgroundField } from "../shared/BackgroundField";
-import { RealityBreach } from "../shared/RealityBreach";
+import { RealityBreach } from "../features/reality-breach/RealityBreach";
 import { Toast } from "../shared/Toast";
 import { copyText } from "../utils/clipboard";
 

@@ -1,15 +1,15 @@
-import { CHOICES, PHASES } from "./data";
+import { PHASES } from "./data";
 import type { Choice } from "./types";
 
 interface DecisionPanelProps {
   phaseIndex: number;
   dispatch: string;
   locked: boolean;
+  choices: readonly Choice[];
   onChoose: (choice: Choice, index: number) => void;
 }
 
-export function DecisionPanel({ phaseIndex, dispatch, locked, onChoose }: DecisionPanelProps) {
-  const choices = CHOICES[phaseIndex] ?? [];
+export function DecisionPanel({ phaseIndex, dispatch, locked, choices, onChoose }: DecisionPanelProps) {
   return (
     <div className="decision-panel">
       <div className="phase-line">

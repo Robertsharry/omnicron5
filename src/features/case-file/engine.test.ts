@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { CHOICES, INCIDENTS } from "./data";
-import { applyChoice, assess, createCase, formatDossier, pickOne } from "./engine";
+import { INCIDENTS } from "./data";
+import { applyChoice, assess, createBeat, createCase, formatDossier, pickOne } from "./engine";
 
 describe("case engine", () => {
   it("creates a deterministic case with a deterministic random source", () => {
@@ -15,8 +15,22 @@ describe("case engine", () => {
   });
 
   it("applies choice deltas and clamps metrics", () => {
-    expect(applyChoice({ nerve: 95, weird: 2, paper: 99 }, CHOICES[0][0]))
-      .toEqual({ nerve: 100, weird: 6, paper: 100 });
+    expect(applyChoice({ nerve: 95, weird: 2, paper: 99 }, INCIDENTS[0].openingChoices[0]))
+      .toEqual({ nerve: 100, weird: 7, paper: 100 });
+  });
+
+  it("creates prompt-specific choices for each story beat", () => {
+    const beat = createBeat(INCIDENTS[4], 2, () => 0);
+    expect(beat.dispatch).toContain("pigeon negotiating committee");
+    expect(beat.choices[0].text).toContain("goose");
+  });
+
+  it("provides three contextual options for every follow-up phase", () => {
+    for (let phase = 1; phase <= 4; phase += 1) {
+      const beat = createBeat(INCIDENTS[6], phase, () => 0.99);
+      expect(beat.choices).toHaveLength(3);
+      expect(beat.dispatch).toContain("ocean door");
+    }
   });
 
   it("prioritizes the bureaucracy outcome", () => {

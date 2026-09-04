@@ -1,5 +1,5 @@
 import { applyChoice, INITIAL_METRICS } from "./engine";
-import type { CaseFile, Choice, GameState } from "./types";
+import type { CaseFile, Choice, GameState, StoryBeat } from "./types";
 
 export const initialGameState: GameState = {
   status: "idle",
@@ -9,20 +9,27 @@ export const initialGameState: GameState = {
   logs: [],
   choices: [],
   dispatch: "",
+  currentChoices: [],
   locked: false,
 };
 
 export type GameAction =
   | { type: "START"; caseFile: CaseFile }
   | { type: "CHOOSE"; choice: Choice }
-  | { type: "ADVANCE"; dispatch: string }
+  | { type: "ADVANCE"; beat: StoryBeat }
   | { type: "COMPLETE" }
   | { type: "ABANDON" };
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "START":
-      return { ...initialGameState, status: "active", caseFile: action.caseFile, dispatch: action.caseFile.incident.dispatch };
+      return {
+        ...initialGameState,
+        status: "active",
+        caseFile: action.caseFile,
+        dispatch: action.caseFile.incident.dispatch,
+        currentChoices: action.caseFile.incident.openingChoices,
+      };
     case "CHOOSE":
       if (state.status !== "active" || state.locked) return state;
       return {
@@ -33,7 +40,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         locked: true,
       };
     case "ADVANCE":
-      return { ...state, phaseIndex: state.phaseIndex + 1, dispatch: action.dispatch, locked: false };
+      return {
+        ...state,
+        phaseIndex: state.phaseIndex + 1,
+        dispatch: action.beat.dispatch,
+        currentChoices: action.beat.choices,
+        locked: false,
+      };
     case "COMPLETE":
       return { ...state, status: "complete", locked: false };
     case "ABANDON":

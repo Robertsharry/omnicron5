@@ -1,5 +1,5 @@
-import { COMPLICATIONS, INCIDENTS } from "./data";
-import type { Assessment, CaseFile, Choice, Metrics } from "./types";
+import { BEAT_POOLS, INCIDENTS } from "./data";
+import type { Assessment, CaseFile, Choice, Incident, Metrics, StoryBeat } from "./types";
 
 export const INITIAL_METRICS: Metrics = { nerve: 50, weird: 10, paper: 0 };
 
@@ -18,8 +18,10 @@ export function createCase(random = Math.random): CaseFile {
   };
 }
 
-export function randomComplication(random = Math.random): string {
-  return pickOne(COMPLICATIONS, random);
+export function createBeat(incident: Incident, phaseIndex: number, random = Math.random): StoryBeat {
+  const factories = BEAT_POOLS[phaseIndex];
+  if (!factories?.length) throw new Error(`No story beats configured for phase ${phaseIndex}.`);
+  return pickOne(factories, random)(incident);
 }
 
 export function applyChoice(metrics: Metrics, choice: Choice): Metrics {
